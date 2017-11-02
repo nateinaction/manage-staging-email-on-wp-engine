@@ -1,10 +1,9 @@
 === Redirect Emails on Staging ===
-Contributors: JPry
+Contributors: Nate Gay, Jeremy Pry
 Tags: email, wpengine
-Requires at least: 3.5.2
-Tested up to: 3.8.1
-Stable Tag: 1.1
-License: GPL2
+Tested up to: 4.8.3
+Stable Tag: 1.0
+License: GPL3+
 
 Redirect any emails that are sent by the staging site to the administrator of the site.
 
