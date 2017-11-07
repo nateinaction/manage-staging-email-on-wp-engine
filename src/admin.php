@@ -73,7 +73,8 @@ class Admin
 	public function admin_page_html($email_options)
 	{
         $html = '';
-        $html .= '<br>';
+        $html .= '<h2>Manage Staging Emails on WP Engine</h2>';
+        $html .= '<p>Where would you like your staging emails to be directed?</p>';
         $html .= '<form  method="post">';
 
         $html .= $this->radio_option_html('admin', $email_options);
@@ -88,7 +89,7 @@ class Admin
         $html .= $this->radio_option_html('none', $email_options); 
         $html .= 'Halt all emails<br/>';
 
-        $html .= '<input type="submit" value="Save">';
+        $html .= '<p><input type="submit" value="Save"></p>';
         $html .= '</form>';
         return $html;
 	}
