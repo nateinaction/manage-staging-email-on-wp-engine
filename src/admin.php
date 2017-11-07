@@ -28,7 +28,41 @@ class Admin
 
 	public function render_admin_page()
 	{
-		echo $this->admin_page_html();
+		$post = $this->check_for_post_on_admin();
+		if ($post) {
+			$this->set_email_options($post);
+			echo $this->post_success_html();
+		}
+
+		$email_options = $this->get_email_options();
+		echo $this->admin_page_html($email_options);
+	}
+
+	public function get_email_options()
+	{
+		$settings = new Settings();
+		$options = $settings->get_plugin_options();
+		$admin_email = $settings->get_admin_email();
+
+		if (!$options) {
+			$options = array();
+			$options[$this->selection_name] = 'admin';
+			$options['custom_address'] = '';
+		}
+		$options['admin_email'] = $admin_email;
+		return $options;
+	}
+
+	/**
+	 * Send options array to db
+	 *
+	 * @todo REALLY NEED TO VALIDATE AND SANITIZE
+	 * @return null
+	 */
+	public function set_email_options($options_array)
+	{
+		$settings = new Settings();
+		$settings->set_plugin_options($options_array);
 	}
 
 	/**
@@ -37,20 +71,27 @@ class Admin
 	 * @todo check for email validity
 	 * @return string HTML page to render
 	 */
-	public function admin_page_html()
+	public function admin_page_html($email_options)
 	{
         $html = '';
         $html .= '<br>';
         $html .= '<form  method="post">';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="admin" checked="true"> WordPress Admin Email (blah@blah.com)<br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="custom" onclick="document.getElementById(\'custom_address\').focus()"> ';
-        $html .= '<input type="text" id="custom_address" name="' . $this->post_name . '[custom_address]" placeholder="custom@email.com"><br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="log"> Send emails to PHP error log<br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="none"> Halt all emails<br/>';
+        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="admin" ' . $this->is_checked('admin', $email_options) . '> WordPress Admin Email (' . $email_options['admin_email'] . ')<br/>';
+        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="custom" ' . $this->is_checked('custom', $email_options) . ' onclick="document.getElementById(\'custom_address\').focus()"> ';
+        $html .= '<input type="text" id="custom_address" name="' . $this->post_name . '[custom_address]" placeholder="custom@email.com" value="' . $email_options['custom_address'] . '"><br/>';
+        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="log" ' . $this->is_checked('log', $email_options) . '> Send emails to PHP error log<br/>';
+        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="none" ' . $this->is_checked('none', $email_options) . '> Halt all emails<br/>';
         $html .= '<input type="submit" value="Save">';
-        $html .= $this->post_success_html();
         $html .= '</form>';
         return $html;
+	}
+
+	public function is_checked($value, $email_options)
+	{
+		if ($value === $email_options['email_preference']) {
+			return 'checked';
+		}
+		return '';
 	}
 
 	/**
@@ -60,11 +101,7 @@ class Admin
 	 */
 	public function post_success_html()
 	{
-		if($this->check_for_post_on_admin()) {
-			var_dump($_POST[$this->post_name]);
-            return '<br><p style="color:green;font-weight:800;">Saved email preference.</p>';
-		}
-		return '';
+        return '<br><p style="color:green;font-weight:800;">Saved email preference.</p>';
 	}
 
 	/**
@@ -76,19 +113,6 @@ class Admin
 	{
 		if (isset($_POST[$this->post_name])) {
 			return $_POST[$this->post_name];
-		}
-	}
-
-	/**
-	 * Check to see if a POST request was made, if so, set it in db
-	 *
-	 * @todo REALLY NEED TO VALIDATE AND SANITIZE
-	 * @return bool True if valid POST received
-	 */
-	public function send_to_db()
-	{
-		if ($this->check_for_post_on_admin()) {
-			$this->set_preferred_address($_POST[$this->post_name]);
 		}
 	}
 }

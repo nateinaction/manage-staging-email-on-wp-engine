@@ -13,25 +13,38 @@ if (!defined('ABSPATH')) {
  */
 class Settings
 {
+	public $option_name = 'manage_staging_email_wpe';
+
 	/**
-	 * Set new preferred email address
+	 * Sets plugin options in WordPress' database
 	 *
-	 * @uses update_option() Set new preferred email address
+	 * @uses update_option() Sets plugin settings in db
 	 * @return null
 	 */
-	public function set_preferred_address($preferred_address)
+	public function set_plugin_options($options_array)
 	{
-		update_option('wpe_staging_email', $preferred_address);
+		\update_option($this->option_name, $options_array);
 	}
 
 	/**
-	 * Get preferred email addresss
+	 * Gets plugin options from WordPress' database
+	 *
+	 * @uses get_site_option() Grabs plugin settings from db
+	 * @return array|bool Will be false if no settings exist yet, else array with settings 
+	 */
+	public function get_plugin_options()
+	{
+		return \get_site_option($this->option_name);
+	}
+
+	/**
+	 * Gets admin email from WordPress' database
 	 *
 	 * @uses get_site_option() Grabs preferred email address from db
-	 * @return string Value of preferred address
+	 * @return string Value of admin email
 	 */
-	public function get_preferred_address()
+	public function get_admin_email()
 	{
-		return get_site_option('wpe_staging_email') || get_site_option('admin_email');
+		return \get_site_option('admin_email');
 	}
 }
