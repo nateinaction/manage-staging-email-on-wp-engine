@@ -16,8 +16,4 @@
 
 require_once("vendor/autoload.php");
 
-use nategay\manage_staging_email_wpe;
-
-//new Main;
-new Admin;
-new Settings;
+nategay\manage_staging_email_wpe\Main::run();

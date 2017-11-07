@@ -9,29 +9,27 @@ if (!defined('ABSPATH')) {
 
 class Admin
 {
-	/**
-	 * Constructor.
-	 *
-	 * Hook the methods of this class to the appropriate hooks in WordPress
-	 */
-	public function __construct()
-	{
-		if (Main::check_staging()) {
-			add_menu_page(
-				'Manage Staging Emails',
-				'Manage Staging Emails',
-				'administrator',
-				'manage-staging-emails-wpe',
-				array($this,'display_admin_page'),
-				'dashicons-email-alt',
-				80
-			);
-		}
-	}
-
 	// Name of expected POST values
 	public $post_name = 'manage_staging_email_wpe_settings';
 	public $selection_name = 'email_preference';
+
+	public function admin_menu_item()
+	{
+		\add_menu_page(
+			'Manage Staging Emails',
+			'Manage Staging Emails',
+			'administrator',
+			'manage-staging-emails-wpe',
+			array($this, 'render_admin_page'),
+			'dashicons-email-alt',
+			80
+		);
+	}
+
+	public function render_admin_page()
+	{
+		echo $this->admin_page_html();
+	}
 
 	/**
 	 * Display the admin page
@@ -43,6 +41,7 @@ class Admin
 	{
         $html = '';
         $html .= '<br>';
+        $html .= '<form  method="post">';
         $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="admin" checked="true"> WordPress Admin Email (blah@blah.com)<br/>';
         $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="custom" onclick="document.getElementById(\'custom_address\').focus()"> ';
         $html .= '<input type="text" id="custom_address" name="' . $this->post_name . '[custom_address]" placeholder="custom@email.com"><br/>';
@@ -62,6 +61,7 @@ class Admin
 	public function post_success_html()
 	{
 		if($this->check_for_post_on_admin()) {
+			var_dump($_POST[$this->post_name]);
             return '<br><p style="color:green;font-weight:800;">Saved email preference.</p>';
 		}
 		return '';
