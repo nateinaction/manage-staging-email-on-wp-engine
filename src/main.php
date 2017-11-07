@@ -1,7 +1,10 @@
 <?php
 
 namespace nategay\manage_staging_email_wpe;
- 
+
+// Prevent direct access
+if (!defined('ABSPATH')) exit;
+
 class Main
 {
 	/**
@@ -34,8 +37,6 @@ class Main
     public static function run()
     {
         $main = new Main();
-        //$settings = new Settings();
-
         $main->init();
     }
 }

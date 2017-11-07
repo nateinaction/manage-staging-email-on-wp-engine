@@ -2,16 +2,15 @@
 
 namespace nategay\manage_staging_email_wpe;
 
-// Prevent direct access to this file
-if (!defined('ABSPATH')) {
-	die('You can\'t do anything by accessing this file directly.');
-}
+// Prevent direct access
+if (!defined('ABSPATH')) exit;
 
 class Admin
 {
 	// Name of expected POST values
 	public $post_name = 'manage_staging_email_wpe_settings';
 	public $selection_name = 'email_preference';
+	public $custom_address = 'custom_address';
 
 	public function admin_menu_item()
 	{
@@ -47,7 +46,7 @@ class Admin
 		if (!$options) {
 			$options = array();
 			$options[$this->selection_name] = 'admin';
-			$options['custom_address'] = '';
+			$options[$this->custom_address] = '';
 		}
 		$options['admin_email'] = $admin_email;
 		return $options;
@@ -76,14 +75,37 @@ class Admin
         $html = '';
         $html .= '<br>';
         $html .= '<form  method="post">';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="admin" ' . $this->is_checked('admin', $email_options) . '> WordPress Admin Email (' . $email_options['admin_email'] . ')<br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="custom" ' . $this->is_checked('custom', $email_options) . ' onclick="document.getElementById(\'custom_address\').focus()"> ';
-        $html .= '<input type="text" id="custom_address" name="' . $this->post_name . '[custom_address]" placeholder="custom@email.com" value="' . $email_options['custom_address'] . '"><br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="log" ' . $this->is_checked('log', $email_options) . '> Send emails to PHP error log<br/>';
-        $html .= '<input type="radio" name="' . $this->post_name . '[' . $this->selection_name . ']" value="none" ' . $this->is_checked('none', $email_options) . '> Halt all emails<br/>';
+
+        $html .= $this->radio_option_html('admin', $email_options);
+        $html .= 'WordPress Admin Email (' . $email_options['admin_email'] . ')<br/>';
+
+        $html .= $this->radio_option_html('custom', $email_options);
+        $html .= '<input type="text" id="' . $this->custom_address . '" name="' . $this->post_name . '[' . $this->custom_address . ']" placeholder="custom@email.com" value="' . $email_options[$this->custom_address] . '"><br/>';
+
+        $html .= $this->radio_option_html('log', $email_options);
+        $html .= 'Send emails to PHP error log<br/>';
+
+        $html .= $this->radio_option_html('none', $email_options); 
+        $html .= 'Halt all emails<br/>';
+
         $html .= '<input type="submit" value="Save">';
         $html .= '</form>';
         return $html;
+	}
+
+	public function radio_option_html($option_name, $email_options)
+	{
+		$type = 'type="radio"';
+		$name = 'name="' . $this->post_name . '[' . $this->selection_name . ']"';
+		$value = 'value="' . $option_name . '"';
+		$checked = $this->is_checked($option_name, $email_options);
+		$onclick = '';
+
+		if ($option_name === 'custom') {
+			$onclick = 'onclick="document.getElementById(\'' . $this->custom_address . '\').focus()"';
+		}
+
+		return '<input ' . $type . ' ' . $name . ' ' . $value . ' ' . $checked . ' ' . $onclick . '> ';
 	}
 
 	public function is_checked($value, $email_options)

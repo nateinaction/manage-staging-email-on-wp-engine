@@ -14,6 +14,9 @@
  *
  */
 
-require_once("vendor/autoload.php");
+// Prevent direct access
+if (!defined('ABSPATH')) exit;
+
+require_once('vendor/autoload.php');
 
 nategay\manage_staging_email_wpe\Main::run();

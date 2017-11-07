@@ -2,10 +2,8 @@
 
 namespace nategay\manage_staging_email_wpe;
 
-// Prevent direct access to this file
-if (!defined('ABSPATH')) {
-	die('You can\'t do anything by accessing this file directly.');
-}
+// Prevent direct access
+if (!defined('ABSPATH')) exit;
 
 /**
  * This class handles redirecting emails when on the WP Engine Staging site.
