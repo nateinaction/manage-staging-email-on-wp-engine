@@ -29,12 +29,46 @@ class Admin
 	{
 		$post = $this->check_for_post_on_admin();
 		if ($post) {
-			$this->set_email_options($post);
-			echo $this->post_success_html();
+			$valid_post = $this->check_for_valid_post($post);
+			if ($valid_post['success']) {
+				$this->set_email_options($post);
+			}
+			$post_success_html = $valid_post['html'];
 		}
 
 		$email_options = $this->get_email_options();
-		echo $this->admin_page_html($email_options);
+		$form = $this->admin_page_html($email_options);
+		
+		echo $form . $post_success_html;
+	}
+
+	/**
+	 * Display success message on admin page if a valid POST request was received
+	 *
+	 * @return string HTML output of success message
+	 */
+	public function check_for_valid_post($post)
+	{
+		if ('custom' === $post[$this->selection_name]) {
+			$email_address = $post[$this->custom_address];
+			if(!$this->check_for_valid_email($email_address)) {
+				return array(
+					'success' => false,
+					'html' => '<p style="color:red;font-weight:800;">Please enter a valid email.</p>',
+				);
+			}
+		}
+		return array(
+			'success' => true,
+			'html' => '<p style="color:green;font-weight:800;">Saved email preference.</p>',
+		);
+	}
+
+	public function check_for_valid_email($email_address)
+	{
+		if (is_email($email_address)) {
+      		return true;
+		}
 	}
 
 	public function get_email_options()
@@ -137,16 +171,6 @@ class Admin
 			return 'checked';
 		}
 		return '';
-	}
-
-	/**
-	 * Display success message on admin page if a valid POST request was received
-	 *
-	 * @return string HTML output of success message
-	 */
-	public function post_success_html()
-	{
-        return '<br><p style="color:green;font-weight:800;">Saved email preference.</p>';
 	}
 
 	/**
