@@ -8,6 +8,17 @@ if (!defined('ABSPATH')) exit;
 class Main
 {
 	/**
+	 * Static method to initialize class
+	 *
+	 * @return null
+	 */
+    public static function run()
+    {
+        $main = new Main();
+        $main->init();
+    }
+
+	/**
 	 * Initialize main function
 	 *
 	 * @return null
@@ -33,10 +44,4 @@ class Main
 			return true;
 		}
 	}
- 
-    public static function run()
-    {
-        $main = new Main();
-        $main->init();
-    }
 }
