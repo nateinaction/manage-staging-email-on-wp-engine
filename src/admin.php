@@ -73,7 +73,7 @@ class Admin
 	public function admin_page_html($email_options)
 	{
         $html = '';
-        $html .= '<h2>Manage Staging Emails on WP Engine</h2>';
+        $html .= '<h2>Manage Staging Emails</h2>';
         $html .= '<p>Where would you like your staging emails to be directed?</p>';
         $html .= '<form  method="post">';
 
@@ -81,7 +81,7 @@ class Admin
         $html .= 'WordPress Admin Email (' . $email_options['admin_email'] . ')<br/>';
 
         $html .= $this->radio_option_html('custom', $email_options);
-        $html .= '<input type="text" id="' . $this->custom_address . '" name="' . $this->post_name . '[' . $this->custom_address . ']" placeholder="custom@email.com" value="' . $email_options[$this->custom_address] . '"><br/>';
+        $html .= $this->text_box_html($email_options) . '<br/>';
 
         $html .= $this->radio_option_html('log', $email_options);
         $html .= 'Send emails to PHP error log<br/>';
@@ -96,22 +96,44 @@ class Admin
 
 	public function radio_option_html($option_name, $email_options)
 	{
-		$type = 'type="radio"';
-		$name = 'name="' . $this->post_name . '[' . $this->selection_name . ']"';
-		$value = 'value="' . $option_name . '"';
-		$checked = $this->is_checked($option_name, $email_options);
-		$onclick = '';
+		$attribute_array = array(
+			'type' => 'radio',
+			'name' => $this->post_name . '[' . $this->selection_name . ']',
+			'value' => $option_name,
+			'onclick' => '',
+		);
 
 		if ($option_name === 'custom') {
-			$onclick = 'onclick="document.getElementById(\'' . $this->custom_address . '\').focus()"';
+			$attribute_array['onclick'] = 'document.getElementById(\'' . $this->custom_address . '\').focus()';
 		}
 
-		return '<input ' . $type . ' ' . $name . ' ' . $value . ' ' . $checked . ' ' . $onclick . '> ';
+		return '<input ' . $this->get_attributes_html($attribute_array) . ' ' . $this->is_checked($option_name, $email_options) . '> ';
+	}
+
+	public function text_box_html($email_options)
+	{
+		$attribute_array = array(
+			'type' => 'text',
+			'id' => $this->custom_address,
+			'name' => $this->post_name . '[' . $this->custom_address . ']',
+			'placeholder' => 'custom@email.com',
+			'value' => $email_options[$this->custom_address],
+		);
+		return '<input ' . $this->get_attributes_html($attribute_array) . '>';
+	}
+
+	public function get_attributes_html($attribute_array)
+	{
+		$html = '';
+		foreach ($attribute_array as $key => $value) {
+			$html .= $key . '="' . $value . '" ';
+		}
+		return $html;
 	}
 
 	public function is_checked($value, $email_options)
 	{
-		if ($value === $email_options['email_preference']) {
+		if ($value === $email_options[$this->selection_name]) {
 			return 'checked';
 		}
 		return '';

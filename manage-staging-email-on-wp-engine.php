@@ -2,15 +2,18 @@
 /**
  * Plugin Name: Manage Staging Email on WP Engine
  * Plugin URI: http://wordpress.org/plugins/redirect-emails-on-staging/
- * Description: A useful WordPress plugin that allows you to redirect, log or halt all emails on a WP Engine staging environment.
+ * Description: Redirect, log, or halt all emails on a WP Engine staging environment.
  * Version: 1.0
  * Author: Nate Gay
  * Author URI: https://nategay.me/
  * License: GPL3+
  *
- * Made possible by:
- * Jeremy Pry https://github.com/PrysPlugins/WPE-redirect-emails-on-staging
- * Sal Ferrarello https://github.com/salcode/stop-emails/
+ * This is a derivative work based on Jeremy Pry's original plugin,
+ * Redirect Emails on Staging. The method which emails are redirected
+ * is based on Sal Ferrarello's plugin, Stop Emails.
+ *
+ * https://github.com/PrysPlugins/WPE-redirect-emails-on-staging
+ * https://github.com/salcode/stop-emails/
  *
  */
 
