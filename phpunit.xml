@@ -1,0 +1,21 @@
+<phpunit
+    colors="true"
+    bootstrap="./vendor/autoload.php"
+>
+    <testsuites>
+        <testsuite name="nategay/manage-staging-emails-wpe units">
+            <directory>./tests/unit/</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- Filter code coverage: -->
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+
+    <php>
+        <ini name="date.timezone" value="UTC" />
+    </php>
+</phpunit>
