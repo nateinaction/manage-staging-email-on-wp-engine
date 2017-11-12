@@ -1,7 +1,12 @@
 <phpunit
     colors="true"
-    bootstrap="./vendor/autoload.php"
->
+    bootstrap="./vendor/autoload.php">
+
+    <!-- Allow direct file access: -->
+    <php>
+        <const name="ABSPATH" value="foobar"/>
+    </php>
+
     <testsuites>
         <testsuite name="nategay/manage-staging-emails-wpe units">
             <directory>./tests/unit/</directory>

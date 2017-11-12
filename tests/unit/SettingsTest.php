@@ -15,22 +15,23 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetPluginOptions($options_array, $valid_email, $expect)
     {
-        $this->markTestSkipped('Skipping');
+        //$this->markTestSkipped('Skipping');
 
         $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
-            ->setMethods(array('getPluginOptions', 'checkForValidEmail'))
+            ->setMethods(array('getPluginOptions', 'checkForValidEmail', 'setOptionsInDb'))
             ->getMock();
 
-        $mock->expects($this->once())
-            ->method('getPluginOptions')
+        $mock->method('getPluginOptions')
             ->will($this->returnValue(array(
                 'email_preference' => 'admin',
                 'custom_address' => '',
             )));
 
-        $mock->expects($this->once())
-            ->method('checkForValidEmail')
+        $mock->method('checkForValidEmail')
             ->will($this->returnValue($valid_email));
+
+        $mock->method('setOptionsInDb')
+            ->will($this->returnValue(true));
 
         $result = $mock->setPluginOptions($options_array);
 
@@ -45,10 +46,10 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
                     'email_preference' => 'admin',
                     'custom_address' => '',
                 ),
-                false,
+                true,
                 array(
-                    'status' => false,
-                    'message' => 'Please enter a valid email.',
+                    'status' => true,
+                    'message' => 'Saved email preference.',
                 ),
             ),
             array(
@@ -56,10 +57,32 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
                     'email_preference' => 'admin',
                     'custom_address' => '',
                 ),
+                false,
+                array(
+                    'status' => true,
+                    'message' => 'Saved email preference.',
+                ),
+            ),
+            array(
+                array(
+                    'email_preference' => 'custom',
+                    'custom_address' => '',
+                ),
                 true,
                 array(
                     'status' => true,
                     'message' => 'Saved email preference.',
+                ),
+            ),
+            array(
+                array(
+                    'email_preference' => 'custom',
+                    'custom_address' => '',
+                ),
+                false,
+                array(
+                    'status' => false,
+                    'message' => 'Please enter a valid email.',
                 ),
             ),
         );
