@@ -5,31 +5,33 @@ namespace nategay\manage_staging_email_wpe;
 class MainTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Test CheckStaging() if in staging environment
+     * Make sure init only executes in staging environment
+     *
+     * @param $isStaging bool True if on staging
+     * @param $expect bool|null
+     *
+     * @dataProvider dataTestInit
      */
-    public function testCheckStagingTrue()
+    public function testInit($isStaging, $expect)
     {
-        $this->markTestSkipped('Skipping');
-
-        $main = new Main();
-        $mock = $this->getMockBuilder('\is_wpe_snapshot')
-            ->setMethods(array('is_wpe_snapshot'))
+        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Main')
+            ->setMethods(array('checkStaging', 'addHooks'))
             ->getMock();
-        $mock->expects($this->once())->method('is_wpe_snapshot')->will($this->returnValue(true));
-        $this->assertTrue($main->checkStaging());
+        $mock->method('checkStaging')->will($this->returnValue($isStaging));
+        $mock->method('addHooks')->will($this->returnValue(true));
+
+        $admin;
+        $redirectEmail;
+        $selection;
+
+        $this->assertEquals($mock->init($selection, $redirectEmail, $admin), $expect);
     }
 
-    /**
-     * Test CheckStaging() if not in staging environment
-     */
-    public function testCheckStagingFalse()
+    public function dataTestInit()
     {
-        $this->markTestSkipped('Skipping');
-
-        $mock = $this->getMockBuilder('\nategay\manage_staging_email_wpe\Main')
-            ->setMethods(array('\is_wpe_snapshot'))
-            ->getMock();
-        $mock->expects($this->once())->method('\is_wpe_snapshot')->will($this->returnValue(false));
-        $this->assertFalse($mock->checkStaging());
+        return array(
+            array(true, true),
+            array(false, null),
+        );
     }
 }
