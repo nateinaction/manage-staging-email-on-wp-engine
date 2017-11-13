@@ -24,10 +24,20 @@ class RedirectEmail
      */
     public function sendToAddress($mail_args)
     {
-        $settings = new Settings;
-        $mail_args['to'] = $settings->getPreferredAddress();
+        $mail_args['to'] = $this->getPreferredAddress();
         $mail_args['headers'] = array();
         return $mail_args;
+    }
+
+    /**
+     * Helper function to instantiate Settings class and get preferred address
+     *
+     * @return string Prefferred email address
+     */
+    public function getPreferredAddress()
+    {
+        $settings = new Settings;
+        return $settings->getPreferredAddress();
     }
 
     /**
@@ -66,9 +76,7 @@ class RedirectEmail
     }
 
     /**
-     * Hooked function for email logging.
-     *
-     * Checks if email should be logged and logs it if necessary
+     * Sends email to error log
      *
      * @param array $mock_email represents the email that was stopped.
      */
