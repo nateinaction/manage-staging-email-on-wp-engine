@@ -14,14 +14,13 @@ class MainTest extends \PHPUnit\Framework\TestCase
      */
     public function testInit($isStaging, $expect)
     {
-        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Main')
+        $mock = $this->getMockBuilder('\NateGay\ManageStagingEmailWPE\Main')
             ->setMethods(array('checkStaging', 'manageEmailBehavior', 'manageAddMenuItem'))
             ->getMock();
         $mock->method('checkStaging')->will($this->returnValue($isStaging));
-        $mock->method('manageEmailBehavior')->will($this->returnValue(null));
-        $mock->method('manageAddMenuItem')->will($this->returnValue(null));
 
-        $this->assertEquals($mock->init(), $expect);
+        $result = $mock->init();
+        $this->assertEquals($result, $expect);
     }
 
     public function dataTestInit()
@@ -46,8 +45,6 @@ class MainTest extends \PHPUnit\Framework\TestCase
             ->setMethods(array('getSelection', 'wpHookToRedirectEmail', 'wpHookToReplacePhpMailer'))
             ->getMock();
         $mock->method('getSelection')->will($this->returnValue($selection));
-        $mock->method('wpHookToRedirectEmail')->will($this->returnValue(null));
-        $mock->method('wpHookToReplacePhpMailer')->will($this->returnValue(null));
 
         $this->assertEquals($mock->manageEmailBehavior(), $expect);
     }
@@ -77,7 +74,6 @@ class MainTest extends \PHPUnit\Framework\TestCase
             ->setMethods(array('checkAdmin', 'wpHookToAddMenuItem'))
             ->getMock();
         $mock->method('checkAdmin')->will($this->returnValue($isAdmin));
-        $mock->method('wpHookToAddMenuItem')->will($this->returnValue(null));
 
         $this->assertEquals($mock->manageAddMenuItem(), $expect);
     }

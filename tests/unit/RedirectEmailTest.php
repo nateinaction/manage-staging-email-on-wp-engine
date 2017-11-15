@@ -16,9 +16,7 @@ class RedirectEmailTest extends \PHPUnit\Framework\TestCase
         $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\RedirectEmail')
             ->setMethods(array('getPreferredAddress', 'logWhenEmailManaged'))
             ->getMock();
-        $mock->method('logWhenEmailManaged')->will($this->returnValue(null));
-        $mock->method('getPreferredAddress')
-            ->will($this->returnValue('custom@address.com'));
+        $mock->method('getPreferredAddress')->will($this->returnValue('custom@address.com'));
 
         $this->assertEquals($mock->sendToAddress($mail_args), $expect);
     }
@@ -56,7 +54,6 @@ class RedirectEmailTest extends \PHPUnit\Framework\TestCase
         $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\RedirectEmail')
             ->setMethods(array('sendToErrorLog'))
             ->getMock();
-        $mock->method('sendToErrorLog')->will($this->returnValue(null));
 
         $this->assertEquals($mock->logWhenEmailManaged($past_tense_action), $expect);
     }
