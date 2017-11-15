@@ -18,7 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ManageStagingEmailWPE\\": "src/"
+            "ManageStagingEmailWPE\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ManageStagingEmailWPE\\Tests\\": "test"
         }
     }
 }

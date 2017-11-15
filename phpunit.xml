@@ -1,6 +1,6 @@
 <phpunit
     colors="true"
-    bootstrap="vendor/autoload.php">
+    bootstrap="./vendor/autoload.php">
 
     <!-- Allow direct file access: -->
     <php>
@@ -9,14 +9,14 @@
 
     <testsuites>
         <testsuite name="Manage Staging Emails on WPE unit tests">
-            <directory suffix=".php">tests/unit/</directory>
+            <directory suffix=".php">./tests/unit/</directory>
         </testsuite>
     </testsuites>
 
     <!-- Filter code coverage: -->
     <filter>
         <whitelist>
-            <directory suffix=".php">src/</directory>
+            <directory suffix=".php">./src/</directory>
         </whitelist>
     </filter>
 
