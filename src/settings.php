@@ -13,7 +13,12 @@ if (!defined('ABSPATH')) {
  */
 class Settings
 {
+    // some shared static vars
+    public $plugin_title = 'Manage Staging Email on WP Engine';
     public $option_name = 'manage_staging_email_wpe';
+    public $post_name = 'manage_staging_email_wpe_settings';
+    public $selection_name = 'email_preference';
+    public $custom_address = 'custom_address';
 
     /**
      * Sanitize options before setting in DB
@@ -23,10 +28,8 @@ class Settings
     public function setPluginOptions($options_array)
     {
         $current_options = $this->getPluginOptions();
-
-        $admin = new Admin;
-        $selection = $options_array[$admin->selection_name];
-        $email_address = $options_array[$admin->custom_address];
+        $selection = $options_array[$this->selection_name];
+        $email_address = $options_array[$this->custom_address];
             
         if ('custom' === $selection) {
             if (!$this->checkForValidEmail($email_address)) {
@@ -36,7 +39,7 @@ class Settings
                 );
             }
         } else {
-            $options_array[$admin->custom_address] = $current_options[$admin->custom_address];
+            $options_array[$this->custom_address] = $current_options[$this->custom_address];
         }
         
         $this->setOptionsInDb($options_array);
@@ -79,12 +82,33 @@ class Settings
     {
         $options = $this->getOptionsFromDb();
         if (!$options) {
-            $admin = new Admin;
             $options = array();
-            $options[$admin->selection_name] = 'admin';
-            $options[$admin->custom_address] = '';
+            $options[$this->selection_name] = 'admin';
+            $options[$this->custom_address] = '';
         }
         return $options;
+    }
+
+    /**
+     * An easy way to access selection option in DB
+     *
+     * @return string Current selection in DB options
+     */
+    public function getSelection()
+    {
+        $options_array = $this->getPluginOptions();
+        return $options_array[$this->selection_name];
+    }
+
+    /**
+     * An easy way to access custom_address option in DB
+     *
+     * @return string Current custom_address in DB options
+     */
+    public function getCustomAddress()
+    {
+        $options_array = $this->getPluginOptions();
+        return $options_array[$this->custom_address];
     }
 
     /**
@@ -116,12 +140,9 @@ class Settings
      */
     public function getPreferredAddress()
     {
-        $options_array = $this->getPluginOptions();
-        $admin = new Admin;
-
-        if ('admin' === $options_array[$admin->selection_name]) {
-            return $this->getAdminEmail();
+        if ('custom' === $this->getSelection()) {
+            return $this->getCustomAddress();
         }
-        return $options_array[$admin->custom_address];
+        return $this->getAdminEmail();
     }
 }

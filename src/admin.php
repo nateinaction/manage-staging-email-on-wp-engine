@@ -7,13 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Admin
+class Admin extends Settings
 {
-    // Name of expected POST values
-    public $post_name = 'manage_staging_email_wpe_settings';
-    public $selection_name = 'email_preference';
-    public $custom_address = 'custom_address';
-
     /**
      * Adds Manage Staging Emails menu item to dashboard
      *
@@ -42,8 +37,7 @@ class Admin
     {
         $post = $this->checkForPostOnAdmin();
         if ($post) {
-            $settings = new Settings;
-            $setPluginOptions = $settings->setPluginOptions($post);
+            $setPluginOptions = $this->setPluginOptions($post);
             $postSuccessHtml = $this->postSuccessHtml($setPluginOptions);
         }
 
@@ -77,24 +71,22 @@ class Admin
      */
     public function adminPageHtml()
     {
-        $settings = new Settings();
-
         $html = '';
         $html .= '<h2>Manage Staging Emails</h2>';
         $html .= '<p>Where would you like your staging emails to be directed?</p>';
         $html .= '<form  method="post">';
 
-        $html .= $this->radioOptionHtml('admin', $settings->getPluginOptions());
-        $html .= 'WordPress admin email: ' . $settings->getAdminEmail() . '<br/>';
+        $html .= $this->radioOptionHtml('admin');
+        $html .= 'WordPress admin email: ' . $this->getAdminEmail() . '<br/>';
 
-        $html .= $this->radioOptionHtml('custom', $settings->getPluginOptions());
+        $html .= $this->radioOptionHtml('custom');
         $html .= 'Custom email: ';
-        $html .= $this->textBoxHtml($settings->getPluginOptions()) . '<br/>';
+        $html .= $this->textBoxHtml() . '<br/>';
 
-        $html .= $this->radioOptionHtml('log', $settings->getPluginOptions());
+        $html .= $this->radioOptionHtml('log');
         $html .= 'Send emails to PHP error log<br/>';
 
-        $html .= $this->radioOptionHtml('none', $settings->getPluginOptions());
+        $html .= $this->radioOptionHtml('none');
         $html .= 'Halt all emails<br/>';
 
         $html .= '<p><input type="submit" value="Save"></p>';
@@ -106,10 +98,9 @@ class Admin
      * Returns HTML for radio button
      *
      * @param $option_name string Name of radio button
-     * @param $plugin_options array Plugin options array
      * @return string HTML for radio button
      */
-    public function radioOptionHtml($option_name, $plugin_options)
+    public function radioOptionHtml($option_name)
     {
         $attribute_array = array(
             'type' => 'radio',
@@ -123,23 +114,22 @@ class Admin
             $attribute_array['onclick'] = 'document.getElementById(\'' . $this->custom_address . '\').focus()';
         }
 
-        return '<input ' . $this->getAttributesHtml($attribute_array) . ' ' . $this->isChecked($option_name, $plugin_options) . '> ';
+        return '<input ' . $this->getAttributesHtml($attribute_array) . ' ' . $this->isChecked($option_name) . '> ';
     }
 
     /**
      * Returns HTML for text input
      *
-     * @param $plugin_options array Plugin options array
      * @return string HTML for text input
      */
-    public function textBoxHtml($plugin_options)
+    public function textBoxHtml()
     {
         $attribute_array = array(
             'type' => 'text',
             'id' => $this->custom_address,
             'name' => $this->post_name . '[' . $this->custom_address . ']',
             'placeholder' => 'email@example.com',
-            'value' => $plugin_options[$this->custom_address],
+            'value' => $this->getCustomAddress(),
             'onfocus' => 'document.getElementById(\'custom-radio\').checked = true',
         );
         return '<input ' . $this->getAttributesHtml($attribute_array) . '>';
@@ -164,12 +154,11 @@ class Admin
      * This checks to see if a radio button is checked and outputs an HTML string
      *
      * @param $option_name string Name of radio button
-     * @param $plugin_options array Plugin options array
      * @return string HTML, "checked" or empty
      */
-    public function isChecked($option_name, $plugin_options)
+    public function isChecked($option_name)
     {
-        if ($option_name === $plugin_options[$this->selection_name]) {
+        if ($option_name === $this->getSelection()) {
             return 'checked';
         }
         return '';

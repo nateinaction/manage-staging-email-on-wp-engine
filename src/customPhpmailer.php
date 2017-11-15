@@ -23,16 +23,9 @@ class CustomPHPMailer extends \PHPMailer
      */
     public function send()
     {
-        // Get options_array
-        $settings = new Settings;
-        $options_array = $settings->getPluginOptions();
-
-        // Get named parameters
-        $admin = new Admin;
-        $selection = $options_array[$admin->selection_name];
-
-        // Get RedirectEmail class
-        $redirectEmail = new RedirectEmail;
+        // Get options_array and named params
+        $redirectEmail = $this->redirectEmail();
+        $selection = $redirectEmail->getSelection();
 
         if ('log' === $selection) {
             try {
@@ -47,13 +40,26 @@ class CustomPHPMailer extends \PHPMailer
                     'body'   => $this->MIMEBody,
                 );
                 // send to error log
-                $redirectEmail->sendToErrorLog($mock_email);
+                $mock_email_text = \print_r($mock_email, true);
+                $redirectEmail->sendToErrorLog($mock_email_text);
+                $redirectEmail->logWhenEmailManaged('sent to PHP error log');
                 return true;
             } catch (\phpmailerException $e) {
                 return false;
             }
         } else {
+            $redirectEmail->logWhenEmailManaged('halted');
             return true;
         }
+    }
+
+    /**
+     * Helper function to initialize RedirectEmail class
+     *
+     * @return RedirectEmail
+     */
+    public function redirectEmail()
+    {
+        return new RedirectEmail;
     }
 }

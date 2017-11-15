@@ -7,14 +7,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * This class handles redirecting emails when on the WP Engine Staging site.
- *
- * It is usually undesirable for the staging site to send out emails to anyone besides
- * the site administrator. This class hooks into the wp_mail() function in WordPress.
- *
- */
-class RedirectEmail
+class RedirectEmail extends Settings
 {
     /**
      * Redirect email to preferred address and remove CC and BCC headers
@@ -24,20 +17,35 @@ class RedirectEmail
      */
     public function sendToAddress($mail_args)
     {
-        $mail_args['to'] = $this->getPreferredAddress();
+        $preferredAddress = $this->getPreferredAddress();
+        $mail_args['to'] = $preferredAddress;
         $mail_args['headers'] = array();
+        $this->logWhenEmailManaged('redirected to ' . $preferredAddress);
         return $mail_args;
     }
 
     /**
-     * Helper function to instantiate Settings class and get preferred address
+     * A standard message to the error log when emails are managed
      *
-     * @return string Prefferred email address
+     * A love letter to my fellow technicians.
+     *
+     * @param string Past tense statement to indicate what happened with the email
      */
-    public function getPreferredAddress()
+    public function logWhenEmailManaged($past_tense_action)
     {
-        $settings = new Settings;
-        return $settings->getPreferredAddress();
+        $message = 'Email ' . $past_tense_action . ' by the ' . $this->plugin_title . ' plugin.';
+        $this->sendToErrorLog($message);
+        return $message;
+    }
+
+    /**
+     * Sends message to error log
+     *
+     * @param string Message to send to log
+     */
+    public function sendToErrorLog($message)
+    {
+        \error_log($message);
     }
 
     /**
@@ -46,10 +54,10 @@ class RedirectEmail
      * @return CustomPHPMailer instance, the object that replaced the global $phpmailer
      *
      */
-    public function replacePhpmailer()
+    public function replacePhpMailer()
     {
         global $phpmailer;
-        return $this->replaceWithCustomPhpmailer($phpmailer);
+        return $this->replaceWithCustomPhpMailer($phpmailer);
     }
 
     /**
@@ -58,31 +66,9 @@ class RedirectEmail
      * @param PHPMailer $obj WordPress PHPMailer object.
      * @return CustomPHPMailer $obj
      */
-    public function replaceWithCustomPhpmailer(&$obj = null)
+    public function replaceWithCustomPhpMailer(&$obj = null)
     {
         $obj = new CustomPHPMailer;
         return $obj;
-    }
-
-    /**
-     * Convert mock email to text.
-     *
-     * @param $mock_email array Represents the email that was stopped.
-     * @return string Text version of email
-     */
-    public function mockEmailToText($mock_email)
-    {
-        return \print_r($mock_email, true);
-    }
-
-    /**
-     * Sends email to error log
-     *
-     * @param array $mock_email represents the email that was stopped.
-     */
-    public function sendToErrorLog($mock_email)
-    {
-        $text = $this->mockEmailToText($mock_email);
-        \error_log($text);
     }
 }
