@@ -14,7 +14,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
      */
     public function testInit($isStaging, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Main')
+        $mock = $this->getMockBuilder('nategay\\manage_staging_email_wpe\\Main')
             ->setMethods(array('checkStaging', 'manageEmailBehavior', 'manageAddMenuItem'))
             ->getMock();
         $mock->method('checkStaging')->will($this->returnValue($isStaging));
