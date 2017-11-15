@@ -1,6 +1,6 @@
 <?php
 
-//namespace nategay\manage_staging_email_wpe;
+namespace nategay\manage_staging_email_wpe;
 
 class MainTest extends \PHPUnit\Framework\TestCase
 {
