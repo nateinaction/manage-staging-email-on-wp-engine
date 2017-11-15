@@ -1,6 +1,6 @@
 <?php
 
-namespace NateGay\ManageStagingEmailWPE;
+namespace ManageStagingEmailWPE;
 
 class MainTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,13 +14,12 @@ class MainTest extends \PHPUnit\Framework\TestCase
      */
     public function testInit($isStaging, $expect)
     {
-        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Main')
+        $mock = $this->getMockBuilder('ManageStagingEmailWPE\Main')
             ->setMethods(array('checkStaging', 'manageEmailBehavior', 'manageAddMenuItem'))
             ->getMock();
         $mock->method('checkStaging')->will($this->returnValue($isStaging));
 
-        $result = $mock->init();
-        $this->assertEquals($result, $expect);
+        $this->assertEquals($mock->init(), $expect);
     }
 
     public function dataTestInit()
@@ -41,7 +40,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
      */
     public function testManageEmailBehavior($selection, $expect)
     {
-        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Main')
+        $mock = $this->getMockBuilder('ManageStagingEmailWPE\Main')
             ->setMethods(array('getSelection', 'wpHookToRedirectEmail', 'wpHookToReplacePhpMailer'))
             ->getMock();
         $mock->method('getSelection')->will($this->returnValue($selection));
@@ -70,7 +69,7 @@ class MainTest extends \PHPUnit\Framework\TestCase
      */
     public function testManageAddMenuItem($isAdmin, $expect)
     {
-        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Main')
+        $mock = $this->getMockBuilder('ManageStagingEmailWPE\Main')
             ->setMethods(array('checkAdmin', 'wpHookToAddMenuItem'))
             ->getMock();
         $mock->method('checkAdmin')->will($this->returnValue($isAdmin));

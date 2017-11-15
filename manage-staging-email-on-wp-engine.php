@@ -24,4 +24,4 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-NateGay\ManageStagingEmailWPE\Main::run();
+ManageStagingEmailWPE\Main::run();
