@@ -2,7 +2,7 @@
 
 namespace nategay\manage_staging_email_wpe;
 
-class SettingsTest extends \PHPUnit_Framework_TestCase
+class SettingsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test setPluginOptions()

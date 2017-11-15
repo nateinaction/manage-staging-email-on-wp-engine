@@ -2,7 +2,7 @@
 
 namespace nategay\manage_staging_email_wpe;
 
-class RedirectEmailTest extends \PHPUnit_Framework_TestCase
+class RedirectEmailTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that headers are correctly set when redirecting email to another address

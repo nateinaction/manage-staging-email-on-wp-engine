@@ -2,7 +2,7 @@
 
 namespace nategay\manage_staging_email_wpe;
 
-class MainTest extends \PHPUnit_Framework_TestCase
+class MainTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Make sure init only executes in staging environment
@@ -14,7 +14,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
      */
     public function testInit($isStaging, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Main')
+        $mock = $this->getMockBuilder('\nategay\manage_staging_email_wpe\Main')
             ->setMethods(array('checkStaging', 'manageEmailBehavior', 'manageAddMenuItem'))
             ->getMock();
         $mock->method('checkStaging')->will($this->returnValue($isStaging));
