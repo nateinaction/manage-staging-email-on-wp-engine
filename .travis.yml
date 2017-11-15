@@ -2,5 +2,11 @@ language: php
 php:
   - 5.6
   - 7.0
+
+# install dependencies
 install:
-  - composer install
+  - travis_retry composer install --no-interaction
+
+# Submit code coverage report
+after_success:
+ - bash <(curl -s https://codecov.io/bash)
