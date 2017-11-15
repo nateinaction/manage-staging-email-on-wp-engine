@@ -1,6 +1,6 @@
 <?php
 
-namespace nategay\manage_staging_email_wpe;
+namespace NateGay\ManageStagingEmailWPE;
 
 class SettingsTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +15,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetPluginOptions($options_array, $valid_email, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Settings')
             ->setMethods(array('getPluginOptions', 'checkForValidEmail', 'setOptionsInDb'))
             ->getMock();
 
@@ -96,7 +96,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetPluginOptions($options_array, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Settings')
             ->setMethods(array('getOptionsFromDb'))
             ->getMock();
 
@@ -138,7 +138,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetSelection($options_array, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Settings')
             ->setMethods(array('getPluginOptions'))
             ->getMock();
         $mock->method('getPluginOptions')->will($this->returnValue($options_array));
@@ -174,7 +174,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCustomAddress($options_array, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Settings')
             ->setMethods(array('getPluginOptions'))
             ->getMock();
         $mock->method('getPluginOptions')->will($this->returnValue($options_array));
@@ -213,7 +213,7 @@ class SettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetPreferredAddress($selection, $admin_email, $custom_address, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\Settings')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\Settings')
             ->setMethods(array('getSelection', 'getAdminEmail', 'getCustomAddress'))
             ->getMock();
         $mock->method('getSelection')->will($this->returnValue($selection));

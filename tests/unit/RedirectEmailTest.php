@@ -1,6 +1,6 @@
 <?php
 
-namespace nategay\manage_staging_email_wpe;
+namespace NateGay\ManageStagingEmailWPE;
 
 class RedirectEmailTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class RedirectEmailTest extends \PHPUnit\Framework\TestCase
      */
     public function testSendToAddress($mail_args, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\RedirectEmail')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\RedirectEmail')
             ->setMethods(array('getPreferredAddress', 'logWhenEmailManaged'))
             ->getMock();
         $mock->method('logWhenEmailManaged')->will($this->returnValue(null));
@@ -53,7 +53,7 @@ class RedirectEmailTest extends \PHPUnit\Framework\TestCase
      */
     public function testLogWhenEmailManaged($past_tense_action, $expect)
     {
-        $mock = $this->getMockBuilder('nategay\manage_staging_email_wpe\RedirectEmail')
+        $mock = $this->getMockBuilder('NateGay\ManageStagingEmailWPE\RedirectEmail')
             ->setMethods(array('sendToErrorLog'))
             ->getMock();
         $mock->method('sendToErrorLog')->will($this->returnValue(null));

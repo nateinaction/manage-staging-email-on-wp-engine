@@ -1,6 +1,6 @@
 <?php
 
-namespace nategay\manage_staging_email_wpe;
+namespace NateGay\ManageStagingEmailWPE;
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
