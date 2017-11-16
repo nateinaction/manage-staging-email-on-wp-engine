@@ -7,29 +7,46 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Main extends Settings
+class Main
 {
     /**
-     * Static method to initialize class
-     *
-     * @return null
+     * @var Settings
      */
-    public static function run()
+    private $settings;
+
+    /**
+     * @var Admin
+     */
+    private $admin;
+
+    /**
+     * @var RedirectEmail
+     */
+    private $redirectEmail;
+
+    /**
+     * Constructor
+     *
+     * @param Settings $settings
+     * @param Admin $admin
+     * @param RedirectEmail $redirectEmail
+     */
+    public function __construct(Settings $settings, Admin $admin, RedirectEmail $redirectEmail)
     {
-        if (!($main instanceof Main)) {
-            $main = new Main;
-        }
-        $main->init();
+        $this->settings = $settings;
+        $this->admin = $admin;
+        $this->redirectEmail = $redirectEmail;
     }
 
     /**
-     * Initialize plugin only on staging
+     * Run plugin only on staging
      *
+     * @param bool $isStaging Output of checkStaging()
      * @return bool|null True on staging
      */
-    public function init()
+    public function runOnStaging($isStaging)
     {
-        if ($this->checkStaging()) {
+        if ($isStaging) {
             $this->manageEmailBehavior();
             $this->manageAddMenuItem();
             return true;
@@ -44,9 +61,7 @@ class Main extends Settings
      */
     public function checkStaging()
     {
-        if (function_exists('is_wpe_snapshot') && \is_wpe_snapshot()) {
-            return true;
-        }
+        return (function_exists('is_wpe_snapshot') && \is_wpe_snapshot());
     }
 
     /**
@@ -57,7 +72,7 @@ class Main extends Settings
      */
     public function manageEmailBehavior()
     {
-        $selection = $this->getSelection();
+        $selection = $this->settings->getSelection();
         if ('admin' === $selection || 'custom' === $selection) {
             $this->wpHookToRedirectEmail();
             return 'redirect';
@@ -74,8 +89,7 @@ class Main extends Settings
      */
     public function wpHookToRedirectEmail()
     {
-        $redirectEmail = $this->redirectEmail();
-        \add_filter('wp_mail', array($redirectEmail, 'sendToAddress'), 1000, 1);
+        \add_filter('wp_mail', array($this->redirectEmail, 'sendToAddress'), 1000, 1);
     }
 
     /**
@@ -86,8 +100,7 @@ class Main extends Settings
      */
     public function wpHookToReplacePhpMailer()
     {
-        $redirectEmail = $this->redirectEmail();
-        \add_action('plugins_loaded', array($redirectEmail, 'replacePhpMailer'));
+        \add_action('plugins_loaded', array($this->redirectEmail, 'replacePhpMailer'));
     }
 
     /**
@@ -95,7 +108,8 @@ class Main extends Settings
      *
      * @return bool|null True if admin
      */
-    public function manageAddMenuItem() {
+    public function manageAddMenuItem()
+    {
         if ($this->checkAdmin()) {
             $this->wpHookToAddMenuItem();
             return true;
@@ -110,8 +124,7 @@ class Main extends Settings
      */
     public function wpHookToAddMenuItem()
     {
-        $admin = $this->admin();
-        \add_action('admin_menu', array($admin, 'adminMenuItem'));
+        \add_action('admin_menu', array($this->admin, 'adminMenuItem'));
     }
 
     /**
@@ -122,28 +135,6 @@ class Main extends Settings
      */
     public function checkAdmin()
     {
-        if (function_exists('is_admin') && \is_admin()) {
-            return true;
-        }
-    }
-
-    /**
-     * Helper function to initialize Admin class
-     *
-     * @return Admin
-     */
-    public function admin()
-    {
-        return new Admin;
-    }
-
-    /**
-     * Helper function to initialize RedirectEmail class
-     *
-     * @return RedirectEmail
-     */
-    public function redirectEmail()
-    {
-        return new RedirectEmail;
+        return (function_exists('is_admin') && \is_admin());
     }
 }

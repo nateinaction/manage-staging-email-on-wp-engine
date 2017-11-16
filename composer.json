@@ -1,5 +1,5 @@
 {
-    "name": "NateGay/ManageStagingEmailWPE",
+    "name": "ManageStagingEmailWPE",
     "description": "A WordPress plugin that allows you to redirect, log or halt all emails on a WP Engine staging environment.",
     "type": "project",
     "license": "GPL3+",
@@ -14,16 +14,11 @@
         "phpunit/phpunit": "^5.7"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "test": "./vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {
-            "ManageStagingEmailWPE\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "ManageStagingEmailWPE\\Tests\\": "test"
+            "ManageStagingEmailWPE\\": "./src"
         }
     }
 }

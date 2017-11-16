@@ -17,6 +17,8 @@
  *
  */
 
+namespace ManageStagingEmailWPE;
+
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
@@ -24,4 +26,23 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-ManageStagingEmailWPE\Main::run();
+class Factory
+{
+    public function __construct()
+    {
+        $settings = new Settings;
+        $admin = new Admin;
+        $redirectEmail = new RedirectEmail;
+        $main = new Main($settings, $admin, $redirectEmail);
+
+        $this->initialize($main);
+    }
+
+    public function initialize(Main $main)
+    {
+        $isStaging = $main->checkStaging();
+        $main->runOnStaging($isStaging);
+    }
+}
+
+new Factory;

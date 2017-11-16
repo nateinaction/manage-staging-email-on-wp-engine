@@ -1,28 +1,35 @@
 <?php
 
-namespace ManageStagingEmailWPE\Tests;
+namespace ManageStagingEmailWPE;
+
+require_once __DIR__ . '../../vendor/autoload.php';
 
 class MainTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Make sure init only executes in staging environment
+     * Make sure runIfOnStaging() only executes in staging environment
      *
      * @param $isStaging bool True if on staging
      * @param $expect bool|null
      *
-     * @dataProvider dataTestInit
+     * @dataProvider dataTestRunOnStaging
      */
-    public function testInit($isStaging, $expect)
+    public function testRunOnStaging($isStaging, $expect)
     {
-        $mock = $this->getMockBuilder('ManageStagingEmailWPE\Main')
-            ->setMethods(array('checkStaging', 'manageEmailBehavior', 'manageAddMenuItem'))
-            ->getMock();
-        $mock->method('checkStaging')->will($this->returnValue($isStaging));
+        $settings = $this->getMockBuilder('ManageStagingEmailWPE\Settings')->getMock();
+        $admin = $this->getMockBuilder('ManageStagingEmailWPE\Admin')->getMock();
+        $redirectEmail = $this->getMockBuilder('ManageStagingEmailWPE\RedirectEmail')->getMock();
 
-        $this->assertEquals($mock->init(), $expect);
+        $main = $this->getMockBuilder('ManageStagingEmailWPE\Main')
+                ->setMethods(array('__construct', 'manageEmailBehavior', 'manageAddMenuItem'))
+                ->setConstructorArgs(array($settings, $admin, $redirectEmail))
+                ->getMock();
+
+        $result = $main->runOnStaging($isStaging);
+        $this->assertEquals($retult, $expect);
     }
 
-    public function dataTestInit()
+    public function dataTestRunOnStaging()
     {
         return array(
             array(true, true),
