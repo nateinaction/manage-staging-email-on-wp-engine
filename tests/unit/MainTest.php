@@ -20,12 +20,9 @@ class MainTest extends \PHPUnit\Framework\TestCase
         $admin = $this->getMockBuilder('ManageStagingEmailWPE\Admin')->getMock();
         $redirectEmail = $this->getMockBuilder('ManageStagingEmailWPE\RedirectEmail')->getMock();
 
-        $main = $this->getMockBuilder('ManageStagingEmailWPE\Main')
-                ->setMethods(array('__construct', 'manageEmailBehavior', 'manageAddMenuItem'))
-                ->setConstructorArgs(array($settings, $admin, $redirectEmail))
-                ->getMock();
-
+        $main = new Main;
         $result = $main->runOnStaging($isStaging);
+
         $this->assertEquals($retult, $expect);
     }
 

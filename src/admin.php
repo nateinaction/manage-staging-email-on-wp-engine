@@ -86,7 +86,7 @@ class Admin extends Settings
         $html .= $this->radioOptionHtml('log');
         $html .= 'Send emails to PHP error log<br/>';
 
-        $html .= $this->radioOptionHtml('none');
+        $html .= $this->radioOptionHtml('halt');
         $html .= 'Halt all emails<br/>';
 
         $html .= '<p><input type="submit" value="Save"></p>';

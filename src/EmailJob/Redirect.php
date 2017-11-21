@@ -1,14 +1,21 @@
 <?php
 
-namespace ManageStagingEmailWPE;
+namespace ManageStagingEmailWPE\EmailJob;
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class RedirectEmail extends Settings
+class Redirect
 {
+    private $preferred_address;
+
+    public function __construct($preferred_address)
+    {
+        $this->preferred_address = $preferred_address;
+    }
+
     /**
      * Redirect email to preferred address and remove CC and BCC headers
      *
@@ -17,10 +24,9 @@ class RedirectEmail extends Settings
      */
     public function sendToAddress($mail_args)
     {
-        $preferredAddress = $this->getPreferredAddress();
-        $mail_args['to'] = $preferredAddress;
+        $mail_args['to'] = $this->preferredAddress;
         $mail_args['headers'] = array();
-        $this->logWhenEmailManaged('redirected to ' . $preferredAddress);
+        //$this->logWhenEmailManaged('redirected to ' . $this->preferredAddress);
         return $mail_args;
     }
 
@@ -46,29 +52,5 @@ class RedirectEmail extends Settings
     public function sendToErrorLog($message)
     {
         \error_log($message);
-    }
-
-    /**
-     * Replace the global $phpmailer with fake phpmailer.
-     *
-     * @return CustomPHPMailer instance, the object that replaced the global $phpmailer
-     *
-     */
-    public function replacePhpMailer()
-    {
-        global $phpmailer;
-        return $this->replaceWithCustomPhpMailer($phpmailer);
-    }
-
-    /**
-     * Replace the parameter object with an instance of CustomPHPMailer.
-     *
-     * @param PHPMailer $obj WordPress PHPMailer object.
-     * @return CustomPHPMailer $obj
-     */
-    public function replaceWithCustomPhpMailer(&$obj = null)
-    {
-        $obj = new CustomPHPMailer;
-        return $obj;
     }
 }

@@ -53,12 +53,6 @@ class Main
         }
     }
 
-    /**
-     * Check to see if we're on WP Engine's staging environment
-     *
-     * @uses is_wpe_snapshot() Checks to determine if on WPE staging.
-     * @return bool True if on WPE staging or null
-     */
     public function checkStaging()
     {
         return (function_exists('is_wpe_snapshot') && \is_wpe_snapshot());
@@ -70,14 +64,11 @@ class Main
      * @return string Returns 'redirect' if selection is 'admin' or 'custom',
      *                else will return 'replace'
      */
-    public function manageEmailBehavior()
+    public function manageEmailBehavior($selection)
     {
-        $selection = $this->settings->getSelection();
         if ('admin' === $selection || 'custom' === $selection) {
-            $this->wpHookToRedirectEmail();
             return 'redirect';
         }
-        $this->wpHookToReplacePhpMailer();
         return 'replace';
     }
 

@@ -138,9 +138,9 @@ class Settings
      *
      * @return string Value of preferred email address
      */
-    public function getPreferredAddress()
+    public function getPreferredAddress($selection)
     {
-        if ('custom' === $this->getSelection()) {
+        if ('custom' === $selection) {
             return $this->getCustomAddress();
         }
         return $this->getAdminEmail();
