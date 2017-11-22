@@ -15,72 +15,39 @@ class Main
     private $settings;
 
     /**
-     * @var Admin
+     * @var SendToLog
      */
-    private $admin;
-
-    /**
-     * @var RedirectEmail
-     */
-    private $redirectEmail;
+    private $sendToLog;
 
     /**
      * Constructor
-     *
-     * @param Settings $settings
-     * @param Admin $admin
-     * @param RedirectEmail $redirectEmail
      */
-    public function __construct(Settings $settings, Admin $admin, RedirectEmail $redirectEmail)
+    public function __construct()
     {
-        $this->settings = $settings;
-        $this->admin = $admin;
-        $this->redirectEmail = $redirectEmail;
+        $this->settings = new Settings;
+        $this->sendToLog = new SendToLog;
+
+        $customPHPMailer = $this->getCustomPHPMailer();
+        $replacePhpMailer = new ReplacePHPMailer($customPHPMailer);
+        $this->hookReplacePhpMailer($replacePhpMailer);
     }
 
     /**
-     * Run plugin only on staging
+     * Should we log, halt, or redirect email? Redirecting is default.
      *
-     * @param bool $isStaging Output of checkStaging()
-     * @return bool|null True on staging
+     * @return PHPMailer
      */
-    public function runOnStaging($isStaging)
+    public function getCustomPHPMailer()
     {
-        if ($isStaging) {
-            $this->manageEmailBehavior();
-            $this->manageAddMenuItem();
-            return true;
+        $selection = $this->settings->getSelection();
+        switch ($selection) {
+            case 'halt':
+                return new CustomPHPMailer\Halt($this->sendToLog);
+            case 'log':
+                return new CustomPHPMailer\Log($this->sendToLog);
+            default:
+                return new CustomPHPMailer\Redirect($this->sendToLog, $this->settings);
         }
-    }
-
-    public function checkStaging()
-    {
-        return (function_exists('is_wpe_snapshot') && \is_wpe_snapshot());
-    }
-
-    /**
-     * Hook into WP to create menu and redirect mail
-     *
-     * @return string Returns 'redirect' if selection is 'admin' or 'custom',
-     *                else will return 'replace'
-     */
-    public function manageEmailBehavior($selection)
-    {
-        if ('admin' === $selection || 'custom' === $selection) {
-            return 'redirect';
-        }
-        return 'replace';
-    }
-
-    /**
-     * Hook into wp_mail to change where email is sent
-     *
-     * @uses add_filter() Using add_filter to modify wp_mail function
-     * @return null
-     */
-    public function wpHookToRedirectEmail()
-    {
-        \add_filter('wp_mail', array($this->redirectEmail, 'sendToAddress'), 1000, 1);
     }
 
     /**
@@ -89,43 +56,27 @@ class Main
      * @uses add_action() To inject into load order
      * @return null
      */
-    public function wpHookToReplacePhpMailer()
+    public function hookReplacePhpMailer(ReplacePHPMailer $replacePHPMailer)
     {
-        \add_action('plugins_loaded', array($this->redirectEmail, 'replacePhpMailer'));
+        \add_action('plugins_loaded', array($replacePHPMailer, 'doReplace'));
     }
 
     /**
-     * Add plugin menu only if admin
+     * Adds Manage Staging Emails menu item to dashboard
      *
-     * @return bool|null True if admin
-     */
-    public function manageAddMenuItem()
-    {
-        if ($this->checkAdmin()) {
-            $this->wpHookToAddMenuItem();
-            return true;
-        }
-    }
-
-    /**
-     * Add menu item to WordPress Dashboard
-     *
-     * @uses add_action() To add menu WordPress item
+     * @uses add_menu_page() To add menu item to dashboard
      * @return null
      */
-    public function wpHookToAddMenuItem()
+    public function hookAdminMenu(Admin $admin)
     {
-        \add_action('admin_menu', array($this->admin, 'adminMenuItem'));
-    }
-
-    /**
-     * Check to see if user is admin
-     *
-     * @uses is_admin()
-     * @return bool|null True if admin
-     */
-    public function checkAdmin()
-    {
-        return (function_exists('is_admin') && \is_admin());
+        \add_menu_page(
+            'Manage Staging Emails',
+            'Manage Staging Emails',
+            'administrator',
+            'manage-staging-emails-wpe',
+            array($admin, 'renderAdminPage'),
+            'dashicons-email-alt',
+            80
+        );
     }
 }

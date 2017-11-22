@@ -9,8 +9,16 @@ if (!defined('ABSPATH')) {
 
 class ReplacePHPMailer
 {
+    /**
+     * @var CustomPHPMailer
+     */
     private $customMailer;
 
+    /**
+     * Constructor
+     *
+     * @param CustomPHPMailer $customMailer
+     */
     public function __construct(CustomPHPMailer $customMailer)
     {
         $this->customMailer = $customMailer;
@@ -29,7 +37,7 @@ class ReplacePHPMailer
     }
 
     /**
-     * Replace the global PHPMailer with an custom version.
+     * Replace the global PHPMailer with a CustomPHPMailer.
      *
      * @param PHPMailer $phpMailer WordPress' global PHPMailer
      * @return PHPMailer

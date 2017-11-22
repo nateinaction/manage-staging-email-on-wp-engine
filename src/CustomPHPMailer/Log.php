@@ -1,6 +1,6 @@
 <?php
 
-namespace ManageStagingEmailWPE\EmailJob;
+namespace ManageStagingEmailWPE\CustomPHPMailer;
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
@@ -11,9 +11,17 @@ if (!defined('ABSPATH')) {
 require_once ABSPATH . WPINC . '/class-phpmailer.php';
 
 use \ManageStagingEmailWPE\CustomPHPMailer;
+use \ManageStagingEmailWPE\SendToLog;
 
 class Log extends \PHPMailer implements CustomPHPMailer
 {
+    private $sendToLog;
+
+    public function __construct(SendToLog $sendToLog)
+    {
+        $this->sendToLog = $sendToLog;
+    }
+
     /**
      * Replace PHPMailers send() method with one that sends to the error log.
      *
@@ -32,10 +40,12 @@ class Log extends \PHPMailer implements CustomPHPMailer
                 'header' => $this->MIMEHeader,
                 'body'   => $this->MIMEBody,
             );
-            $poke = \print_r($email, true);
-            \error_log($poke);
+            $message = \print_r($email, true);
+            $this->sendToLog->send($message);
+            $this->sendToLog->sendByline('sent to error log');
+            return true;
         } catch (\phpmailerException $e) {
-            return $e;
+            return false;
         }
     }
 }

@@ -7,26 +7,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Admin extends Settings
+class Admin
 {
-    /**
-     * Adds Manage Staging Emails menu item to dashboard
-     *
-     * @return null
-     */
-    public function adminMenuItem()
-    {
-        \add_menu_page(
-            'Manage Staging Emails',
-            'Manage Staging Emails',
-            'administrator',
-            'manage-staging-emails-wpe',
-            array($this, 'renderAdminPage'),
-            'dashicons-email-alt',
-            80
-        );
-    }
+    private $settings;
 
+    public function __construct(Settings $settings)
+    {
+        $this->settings = $settings;
+    }
     /**
      * Check if a POST exists, set settings and retrieve success/failure message, echo form and message
      *
@@ -35,15 +23,15 @@ class Admin extends Settings
      */
     public function renderAdminPage()
     {
-        $post = $this->checkForPostOnAdmin();
+        $post = $this->checkForPostOnAdmin($this->settings->post_name);
         if ($post) {
-            $setPluginOptions = $this->setPluginOptions($post);
-            $postSuccessHtml = $this->postSuccessHtml($setPluginOptions);
+            $setPluginOptions = $this->settings->setPluginOptions($post);
+            $htmlPostSuccess = $this->htmlPostSuccess($setPluginOptions);
         }
 
         $form = $this->adminPageHtml();
         
-        echo $form . $postSuccessHtml;
+        echo $form . $htmlPostSuccess;
     }
 
     /**
@@ -51,14 +39,14 @@ class Admin extends Settings
      *
      * @return string HTML output of success message
      */
-    public function postSuccessHtml($setPluginOptions)
+    public function htmlPostSuccess($setPluginOptions)
     {
         $attribute_array['style'] = 'color:green;font-weight:800;';
         if (!$setPluginOptions['status']) {
             $attribute_array['style'] = 'color:red;font-weight:800;';
         }
 
-        $html = '<p ' . $this->getAttributesHtml($attribute_array) . '>';
+        $html = '<p ' . $this->htmlAttributes($attribute_array) . '>';
         $html .= $setPluginOptions['message'];
         $html .= '</p>';
         return $html;
@@ -77,7 +65,7 @@ class Admin extends Settings
         $html .= '<form  method="post">';
 
         $html .= $this->radioOptionHtml('admin');
-        $html .= 'WordPress admin email: ' . $this->getAdminEmail() . '<br/>';
+        $html .= 'WordPress admin email: ' . $this->settings->getAdminEmail() . '<br/>';
 
         $html .= $this->radioOptionHtml('custom');
         $html .= 'Custom email: ';
@@ -105,7 +93,7 @@ class Admin extends Settings
         $attribute_array = array(
             'type' => 'radio',
             'id' => $option_name . '-radio',
-            'name' => $this->post_name . '[' . $this->selection_name . ']',
+            'name' => $this->settings->post_name . '[' . $this->settings->selection_name . ']',
             'value' => $option_name,
             'onclick' => '',
         );
@@ -114,7 +102,7 @@ class Admin extends Settings
             $attribute_array['onclick'] = 'document.getElementById(\'' . $this->custom_address . '\').focus()';
         }
 
-        return '<input ' . $this->getAttributesHtml($attribute_array) . ' ' . $this->isChecked($option_name) . '> ';
+        return '<input ' . $this->htmlAttributes($attribute_array) . ' ' . $this->isChecked($option_name) . '> ';
     }
 
     /**
@@ -132,7 +120,7 @@ class Admin extends Settings
             'value' => $this->getCustomAddress(),
             'onfocus' => 'document.getElementById(\'custom-radio\').checked = true',
         );
-        return '<input ' . $this->getAttributesHtml($attribute_array) . '>';
+        return '<input ' . $this->htmlAttributes($attribute_array) . '>';
     }
 
     /**
@@ -141,7 +129,7 @@ class Admin extends Settings
      * @param $attribute_array array Key is attribute name, value is attribute value
      * @return string HTML attributes
      */
-    public function getAttributesHtml($attribute_array)
+    public function htmlAttributes($attribute_array)
     {
         $html = '';
         foreach ($attribute_array as $key => $value) {
@@ -169,10 +157,10 @@ class Admin extends Settings
      *
      * @return bool True if valid POST received
      */
-    public function checkForPostOnAdmin()
+    public function checkForPostOnAdmin($postName)
     {
-        if (isset($_POST[$this->post_name])) {
-            return $_POST[$this->post_name];
+        if (isset($_POST[$post_name])) {
+            return $_POST[$post_name];
         }
     }
 }
